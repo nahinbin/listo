@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Lists - Settings</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Settings</h1>
+            <a href="popup.html" class="back-button" title="Back to Lists" aria-label="Back">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+            </a>
+        </div>
+        
+        <div class="settings-container">
+            <div class="settings-section">
+                <h2>Appearance</h2>
+                <div class="setting-item">
+                    <label for="themeMode">Theme</label>
+                    <div class="custom-select">
+                        <button class="select-button" id="themeModeButton" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="selected-option">System</span>
+                            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="select-dropdown" role="listbox" id="themeModeOptions" hidden>
+                            <div class="select-option" role="option" data-value="system" aria-selected="true">System</div>
+                            <div class="select-option" role="option" data-value="light">Light</div>
+                            <div class="select-option" role="option" data-value="dark">Dark</div>
+                            <div class="select-option" role="option" data-value="custom">Custom</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="customColors" class="custom-colors" style="display: none;">
+                    <div class="setting-item">
+                        <label for="primaryColor">Primary Color</label>
+                        <input type="color" id="primaryColor" class="color-picker" value="#000000">
+                    </div>
+                    <div class="setting-item">
+                        <label for="secondaryColor">Secondary Color</label>
+                        <input type="color" id="secondaryColor" class="color-picker" value="#ffffff">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>List Style</h2>
+                <div class="setting-item">
+                    <label for="listStyle">Choose List Style</label>
+                    <div class="custom-select">
+                        <button class="select-button" id="listStyleButton" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="selected-option">Numbers (1., 2., 3., ...)</span>
+                            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="select-dropdown" role="listbox" id="listStyleOptions" hidden>
+                            <div class="select-option" role="option" data-value="numbers" aria-selected="true">Numbers (1., 2., 3., ...)</div>
+                            <div class="select-option" role="option" data-value="alphabets">Alphabets (a., b., c., ...)</div>
+                            <div class="select-option" role="option" data-value="bullets">Bullets (•)</div>
+                            <div class="select-option" role="option" data-value="tickmarks">Checkboxes (○)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>List Emoji</h2>
+                <div class="setting-item">
+                    <label for="listEmoji">Choose List Emoji</label>
+                    <div class="custom-select">
+                        <button class="select-button" id="emojiButton" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="selected-option">None</span>
+                            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="select-dropdown" role="listbox" id="emojiOptions" hidden>
+                            <div class="select-option" role="option" data-value="none" aria-selected="true">None</div>
+                            <div class="select-option" role="option" data-value="☀️">☀️ Sun</div>
+                            <div class="select-option" role="option" data-value="🌙">🌙 Moon</div>
+                            <div class="select-option" role="option" data-value="📝">📝 Pencil</div>
+                            <div class="select-option" role="option" data-value="📋">📋 Clipboard</div>
+                            <div class="select-option" role="option" data-value="✅">✅ Check Mark</div>
+                            <div class="select-option" role="option" data-value="📌">📌 Pin</div>
+                            <div class="select-option" role="option" data-value="📓">📓 Notebook</div>
+                            <div class="select-option" role="option" data-value="📔">📔 Notebook with Decorative Cover</div>
+                            <div class="select-option" role="option" data-value="📒">📒 Ledger</div>
+                            <div class="select-option" role="option" data-value="📕">📕 Closed Book</div>
+                            <div class="select-option" role="option" data-value="📗">📗 Green Book</div>
+                            <div class="select-option" role="option" data-value="📘">📘 Blue Book</div>
+                            <div class="select-option" role="option" data-value="📙">📙 Orange Book</div>
+                            <div class="select-option" role="option" data-value="📚">📚 Books</div>
+                            <div class="select-option" role="option" data-value="📖">📖 Open Book</div>
+                            <div class="select-option" role="option" data-value="🔖">🔖 Bookmark</div>
+                            <div class="select-option" role="option" data-value="🏷️">🏷️ Label</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html> 

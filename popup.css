@@ -1,0 +1,588 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    /* Light theme variables (default) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f8f8;
+    --bg-hover: #f0f0f0;
+    --text-primary: #000000;
+    --text-secondary: #666666;
+    --border-color: #e0e0e0;
+    --delete-hover: #ff4444;
+    --button-hover: #000000;
+    --button-text-hover: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --input-bg: #ffffff;
+    --input-border: #e0e0e0;
+    --input-text: #000000;
+    --placeholder-color: #999999;
+    --scrollbar-track: #f1f1f1;
+    --scrollbar-thumb: #888888;
+    --scrollbar-thumb-hover: #555555;
+    --save-status-bg: #f8f8f8;
+    --save-status-text: #000000;
+    --save-status-error-bg: #ffebee;
+    --save-status-error-text: #d32f2f;
+}
+
+/* Dark theme variables - complete color reversal */
+body.dark-mode {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --bg-hover: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --border-color: #404040;
+    --delete-hover: #ff6b6b;
+    --button-hover: #ffffff;
+    --button-text-hover: #000000;
+    --shadow-color: rgba(255, 255, 255, 0.1);
+    --input-bg: #1a1a1a;
+    --input-border: #404040;
+    --input-text: #ffffff;
+    --placeholder-color: #666666;
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #404040;
+    --scrollbar-thumb-hover: #666666;
+    --save-status-bg: #1a1a1a;
+    --save-status-text: #ffffff;
+    --save-status-error-bg: #3d1f1f;
+    --save-status-error-text: #ff6b6b;
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 400px;
+    min-height: 300px;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+.container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Header styles */
+.header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-primary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.emoji-icon {
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s ease;
+}
+
+.emoji-icon:hover {
+    transform: scale(1.1);
+}
+
+.settings-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.settings-link svg {
+    display: block;
+}
+
+.settings-link:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Lists container styles */
+.lists-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.list-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 0.3s ease, background 0.2s;
+    background: var(--bg-primary);
+    overflow: hidden;
+    position: relative;
+    padding-left: 16px;
+    min-height: 36px;
+}
+
+.list-line > * {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    height: 100% !important;
+    min-height: 36px !important;
+    display: flex;
+    align-items: center;
+}
+
+.list-line:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+/* Checkbox styles */
+.list-checkbox {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin: 0 2px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.list-checkbox::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--text-primary);
+    border-radius: 50%;
+    position: absolute;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+.list-checkbox:hover::before {
+    background-color: var(--bg-hover);
+}
+
+/* When the checkbox is checked */
+.list-checkbox.checked::before {
+    background-color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+.list-checkbox.checked::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: 2px solid var(--bg-primary);
+    border-top: 0;
+    border-left: 0;
+    position: absolute;
+    transform: rotate(45deg) translate(-1px, -1px);
+    z-index: 1;
+}
+
+.list-content {
+    flex: 1;
+    min-height: 36px;
+    padding: 8px 8px 8px 24px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    width: 100%;
+    cursor: text;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Style for list prefixes (numbers, alphabets, bullets) */
+.list-content[data-style="numbers"]::before,
+.list-content[data-style="alphabets"]::before,
+.list-content[data-style="bullets"]::before {
+    content: attr(data-prefix);
+    position: absolute;
+    left: 8px;
+    color: var(--text-primary);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Remove old tickmark styles */
+.list-content[data-style="tickmarks"] {
+    padding-left: 16px;
+}
+
+.list-content:focus {
+    background-color: var(--bg-hover);
+}
+
+.list-content.saving {
+    background-color: var(--bg-hover);
+}
+
+.list-content.completed {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+/* Delete button styles */
+.delete-btn {
+    color: #e74c3c;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 12px;
+    transition: color 0.2s, opacity 0.2s;
+    opacity: 0;
+    background: transparent !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: none;
+}
+
+.list-line:hover .delete-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.delete-btn:hover {
+    background: transparent !important;
+    color: #c0392b;
+}
+
+/* If removing border causes issues, set opacity to 0 instead (fallback) */
+.list-content.hide-border {
+    border-left: 1px solid transparent;
+    opacity: 0;
+}
+
+.delete-btn.hide-border {
+    border-right: 1px solid transparent;
+    opacity: 0;
+}
+
+/* Add list button styles */
+.add-list-btn {
+    background-color: var(--bg-primary);
+    border: 2px solid var(--text-primary);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+}
+
+.add-list-btn:hover {
+    background-color: var(--button-hover);
+    color: var(--button-text-hover);
+}
+
+.add-list-btn:active {
+    transform: scale(0.98);
+}
+
+/* Focus styles */
+:focus {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+}
+
+body.dark-mode :focus {
+    outline-color: #ffffff;
+}
+
+/* Save status styles */
+.save-status {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    background-color: var(--save-status-bg);
+    color: var(--save-status-text);
+    border-radius: 4px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.save-status.visible {
+    opacity: 1;
+}
+
+.save-status.error {
+    background-color: var(--save-status-error-bg);
+    color: var(--save-status-error-text);
+}
+
+body.dark-mode .save-status {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .save-status.error {
+    background-color: #3d1f1f;
+    color: #ff6b6b;
+}
+
+/* Dark mode hover state improvements */
+body.dark-mode .todo-item:hover {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .filter-btn:hover {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .filter-btn.active {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .header {
+    background-color: #1a1a1a !important;
+    border-bottom-color: #333333 !important;
+}
+
+body.dark-mode .header h1 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .header-controls {
+    background-color: #1a1a1a !important;
+}
+
+body.dark-mode .settings-link {
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-link:hover {
+    background-color: #2a2a2a !important;
+}
+
+body.dark-mode .list-line {
+    border-color: #333333 !important;
+}
+
+body.dark-mode .list-line:hover {
+    border-color: #ffffff !important;
+}
+
+body.dark-mode .list-content {
+    color: #ffffff !important;
+}
+
+body.dark-mode .list-content:focus {
+    background-color: #2a2a2a !important;
+}
+
+body.dark-mode .list-content.saving {
+    background-color: #2a2a2a !important;
+}
+
+body.dark-mode .delete-btn {
+    color: #999999 !important;
+}
+
+body.dark-mode .delete-btn:hover {
+    color: #ffffff !important;
+}
+
+body.dark-mode .add-list-btn {
+    background-color: #1a1a1a !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .add-list-btn:hover {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #2a2a2a !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #666666 !important;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: #888888 !important;
+}
+
+/* Todo item styles */
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: var(--bg-primary);
+    transition: background-color 0.2s ease;
+}
+
+.todo-item:hover {
+    background-color: var(--bg-hover);
+}
+
+.todo-checkbox {
+    margin-right: 12px;
+    accent-color: var(--text-primary);
+}
+
+.todo-text {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+    color: var(--delete-hover);
+    background-color: var(--bg-hover);
+}
+
+/* Filter button styles */
+.filter-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+/* Style selector in settings */
+.style-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.style-select:hover {
+    border-color: var(--text-primary);
+}
+
+.style-select:focus {
+    outline: none;
+    border-color: var(--text-primary);
+}
+
+body.dark-mode .style-select {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .style-select:hover {
+    border-color: var(--text-primary);
+}
+
+/* Ensure the list line has relative positioning for the checkbox */
+.list-line {
+    position: relative;
+} 
