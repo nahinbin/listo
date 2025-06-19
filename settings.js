@@ -1,3 +1,6 @@
+// Test if JavaScript is loading
+console.log('Settings.js loaded successfully');
+
 // Initialize theme mode select
 function initializeThemeModeSelect() {
     const button = document.getElementById('themeModeButton');
@@ -221,6 +224,21 @@ function initializeCustomSelect() {
                 selectedOption.textContent = option.textContent;
                 button.setAttribute('aria-activedescendant', option.id);
             }
+        } else {
+            // Set default to tickmarks if no preference is saved
+            const defaultOption = dropdown.querySelector('[data-value="tickmarks"]');
+            if (defaultOption) {
+                options.forEach(opt => {
+                    opt.setAttribute('aria-selected', 'false');
+                    opt.setAttribute('tabindex', '-1');
+                });
+                defaultOption.setAttribute('aria-selected', 'true');
+                defaultOption.setAttribute('tabindex', '0');
+                selectedOption.textContent = defaultOption.textContent;
+                button.setAttribute('aria-activedescendant', defaultOption.id);
+                // Save the default preference
+                chrome.storage.local.set({ listStyle: 'tickmarks' });
+            }
         }
     });
 
@@ -343,10 +361,10 @@ function initializeCustomSelect() {
 
 // Initialize settings page
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Settings page loaded');
     initializeCustomSelect();
     initializeThemeModeSelect();
     initializeEmojiSettings();
+    initializeClearLists();
 });
 
 function initializeEmojiSettings() {
@@ -396,4 +414,146 @@ function initializeEmojiSettings() {
             emojiOptions.hidden = true;
         }
     });
+}
+
+function initializeClearLists() {
+    const clearListsBtn = document.getElementById('clearListsBtn');
+    
+    if (clearListsBtn) {
+        clearListsBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Remove any existing confirmation message
+            const existingMessage = document.querySelector('.clear-confirmation');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create confirmation message below the button
+            const confirmationDiv = document.createElement('div');
+            confirmationDiv.className = 'clear-confirmation';
+            confirmationDiv.innerHTML = `
+                <div class="confirmation-content">
+                    <p>Are you sure you want to clear all lists?</p>
+                    <div class="confirmation-buttons">
+                        <button class="confirm-yes">Yes, clear all</button>
+                        <button class="confirm-no">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            // Insert after the setting item
+            const settingItem = clearListsBtn.closest('.setting-item');
+            settingItem.parentNode.insertBefore(confirmationDiv, settingItem.nextSibling);
+            
+            // Handle confirmation buttons
+            const yesBtn = confirmationDiv.querySelector('.confirm-yes');
+            const noBtn = confirmationDiv.querySelector('.confirm-no');
+            
+            yesBtn.addEventListener('click', async () => {
+                try {
+                    // Clear all lists from storage
+                    await chrome.storage.local.remove(['lists']);
+                    
+                    // Remove confirmation message
+                    confirmationDiv.remove();
+                    
+                    // Show success message below the button
+                    showSuccessMessage(clearListsBtn);
+                    
+                    console.log('All lists cleared successfully');
+                } catch (error) {
+                    console.error('Error clearing lists:', error);
+                    showNotification('Error clearing lists. Please try again.', 'error');
+                    confirmationDiv.remove();
+                }
+            });
+            
+            noBtn.addEventListener('click', () => {
+                confirmationDiv.remove();
+            });
+        });
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        transition: all 0.3s ease;
+        max-width: 300px;
+        word-wrap: break-word;
+    `;
+    
+    // Set colors based on type
+    if (type === 'success') {
+        notification.style.backgroundColor = '#d4edda';
+        notification.style.color = '#155724';
+        notification.style.border = '1px solid #c3e6cb';
+    } else if (type === 'error') {
+        notification.style.backgroundColor = '#f8d7da';
+        notification.style.color = '#721c24';
+        notification.style.border = '1px solid #f5c6cb';
+    } else {
+        notification.style.backgroundColor = '#d1ecf1';
+        notification.style.color = '#0c5460';
+        notification.style.border = '1px solid #bee5eb';
+    }
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+function showSuccessMessage(button) {
+    // Remove any existing success message
+    const existingSuccess = document.querySelector('.success-message');
+    if (existingSuccess) {
+        existingSuccess.remove();
+    }
+    
+    // Create success message element
+    const successMessage = document.createElement('div');
+    successMessage.className = 'success-message';
+    successMessage.innerHTML = `
+        <div class="success-content">
+            <p>✓ All lists cleared successfully!</p>
+        </div>
+    `;
+    
+    // Insert after the setting item (same location as confirmation)
+    const settingItem = button.closest('.setting-item');
+    settingItem.parentNode.insertBefore(successMessage, settingItem.nextSibling);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        successMessage.style.opacity = '0';
+        successMessage.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            if (successMessage.parentNode) {
+                successMessage.parentNode.removeChild(successMessage);
+            }
+        }, 300);
+    }, 3000);
 } 
