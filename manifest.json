@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "listo",
-  "version": "1.0.4",
-  "description": "A clean, minimal list manager for quick notes and tasks. Features a dark theme, auto-saving, and easy list management.",
+  "version": "1.0.0",
+  "description": "A sophisticated list manager with dark/light themes, customizable list styles, emoji icons, and auto-saving. Perfect for quick notes, tasks, and organized thinking.",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -23,6 +23,6 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "author": "nahin",
-  "homepage_url": "https://github.com/nahinibn/listo",
+  "homepage_url": "https://nahin.space",
   "minimum_chrome_version": "88"
 } 

@@ -1,17 +1,71 @@
 // List Management
 const ListManager = {
-    currentStyle: 'numbers', // Default style
+    currentStyle: 'tickmarks', // Default style - changed to checkboxes
+    draggedElement: null,
+    dragOverElement: null,
+
+    // Function to convert numbers to Roman numerals
+    toRoman(num) {
+        const romanNumerals = [
+            { value: 1000, numeral: 'M' },
+            { value: 900, numeral: 'CM' },
+            { value: 500, numeral: 'D' },
+            { value: 400, numeral: 'CD' },
+            { value: 100, numeral: 'C' },
+            { value: 90, numeral: 'XC' },
+            { value: 50, numeral: 'L' },
+            { value: 40, numeral: 'XL' },
+            { value: 10, numeral: 'X' },
+            { value: 9, numeral: 'IX' },
+            { value: 5, numeral: 'V' },
+            { value: 4, numeral: 'IV' },
+            { value: 1, numeral: 'I' }
+        ];
+
+        let result = '';
+        for (let i = 0; i < romanNumerals.length; i++) {
+            while (num >= romanNumerals[i].value) {
+                result += romanNumerals[i].numeral;
+                num -= romanNumerals[i].value;
+            }
+        }
+        return result;
+    },
 
     getListPrefix(index) {
         switch (this.currentStyle) {
+            case 'none':
+                return '';
             case 'numbers':
                 return `${index + 1}.`;
             case 'alphabets':
                 return `${String.fromCharCode(97 + index)}.`;
+            case 'roman':
+                return `${this.toRoman(index + 1)}.`;
             case 'bullets':
                 return '•';
             case 'tickmarks':
                 return '';
+            case 'dashes':
+                return '— ';
+            case 'arrows':
+                return '→ ';
+            case 'stars':
+                return '★ ';
+            case 'hearts':
+                return '♥ ';
+            case 'circles':
+                return '● ';
+            case 'squares':
+                return '■ ';
+            case 'diamonds':
+                return '◆ ';
+            case 'triangles':
+                return '▲ ';
+            case 'dots':
+                return '• ';
+            case 'lines':
+                return '| ';
             default:
                 return `${index + 1}.`;
         }
@@ -19,7 +73,170 @@ const ListManager = {
 
     // Helper to get content without any prefix
     getContentWithoutPrefix(text) {
-        return text.replace(/^(\d+\.\s*|[a-z]\.\s*|•\s*)/, '');
+        return text.replace(/^(\d+\.\s*|[a-z]\.\s*|[IVXLCMD]+\.\s*|•\s*|—\s*|→\s*|★\s*|♥\s*|●\s*|■\s*|◆\s*|▲\s*|\|\s*)/, '');
+    },
+
+    // Drag and Drop functionality
+    initDragAndDrop() {
+        const container = document.getElementById('listsContainer');
+        if (!container) {
+            console.log('Container not found for drag and drop');
+            return;
+        }
+
+        console.log('Initializing drag and drop');
+        // No need for dragover/drop events with mouse-based approach
+    },
+
+    handleDragOver(e) {
+        // Not used in mouse-based approach
+    },
+
+    handleDrop(e) {
+        // Not used in mouse-based approach
+    },
+
+    handleDragLeave(e) {
+        // Simple - no complex logic needed
+    },
+
+    makeListDraggable(listLine) {
+        let isDragging = false;
+        let startY = 0;
+        let startIndex = 0;
+        let draggedElement = null;
+        let lastTargetIndex = -1;
+        let animationFrameId = null;
+        
+        // Create a small drag handle on the left
+        const dragHandle = document.createElement('div');
+        dragHandle.innerHTML = '⋮';
+        dragHandle.style.cssText = `
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: transparent;
+            cursor: grab;
+            z-index: 10;
+            color: #999;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        `;
+        listLine.appendChild(dragHandle);
+        
+        // Hover effects for the dots
+        listLine.addEventListener('mouseenter', () => {
+            dragHandle.style.opacity = '0.8';
+        });
+        
+        listLine.addEventListener('mouseleave', () => {
+            dragHandle.style.opacity = '0';
+        });
+        
+        dragHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            isDragging = true;
+            startY = e.clientY;
+            draggedElement = listLine;
+            startIndex = Array.from(listLine.parentNode.children).indexOf(listLine);
+            lastTargetIndex = startIndex;
+            
+            listLine.classList.add('dragging');
+            listLine.style.opacity = '0.5';
+            listLine.style.transform = 'rotate(2deg)';
+            listLine.style.zIndex = '1000';
+            listLine.style.transition = 'none';
+            
+            console.log('Mouse down on drag handle, start index:', startIndex);
+        });
+        
+        const handleMouseMove = (e) => {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            
+            // Use requestAnimationFrame for smooth updates
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            
+            animationFrameId = requestAnimationFrame(() => {
+                const currentY = e.clientY;
+                const container = listLine.parentNode;
+                const allLists = Array.from(container.children);
+                const currentIndex = allLists.indexOf(draggedElement);
+                
+                // Find the target position with better precision
+                let targetIndex = startIndex;
+                const containerRect = container.getBoundingClientRect();
+                
+                for (let i = 0; i < allLists.length; i++) {
+                    const rect = allLists[i].getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    
+                    if (currentY < midY) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+                
+                // Handle dropping at the very end
+                if (currentY > containerRect.bottom - 10) {
+                    targetIndex = allLists.length;
+                }
+                
+                // Only move if target position actually changed
+                if (targetIndex !== lastTargetIndex && targetIndex !== currentIndex) {
+                    if (targetIndex === allLists.length) {
+                        container.appendChild(draggedElement);
+                    } else {
+                        container.insertBefore(draggedElement, allLists[targetIndex]);
+                    }
+                    
+                    lastTargetIndex = targetIndex;
+                    console.log('Moved from', currentIndex, 'to', targetIndex);
+                }
+            });
+        };
+        
+        document.addEventListener('mousemove', handleMouseMove, { passive: false });
+        
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            
+            // Cancel any pending animation frame
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            
+            isDragging = false;
+            draggedElement.classList.remove('dragging');
+            draggedElement.style.opacity = '';
+            draggedElement.style.transform = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.transition = '';
+            
+            // Only update and save if position actually changed
+            if (lastTargetIndex !== startIndex) {
+                this.updateListNumbers();
+                this.saveLists();
+                console.log('Final position saved:', lastTargetIndex);
+            }
+            
+            draggedElement = null;
+            console.log('Mouse up, drag ended');
+        });
     },
 
     async saveLists() {
@@ -53,7 +270,7 @@ const ListManager = {
         try {
             const result = await chrome.storage.local.get(['lists', 'listStyle']);
             const lists = result.lists || {};
-            this.currentStyle = result.listStyle || 'numbers';
+            this.currentStyle = result.listStyle || 'tickmarks';
             console.log('Loaded lists:', lists);
             
             const container = document.getElementById('listsContainer');
@@ -106,6 +323,9 @@ const ListManager = {
                     listLine.appendChild(content);
                     listLine.appendChild(deleteBtn);
                     container.appendChild(listLine);
+                    
+                    // Make the list draggable
+                    this.makeListDraggable(listLine);
                 }
             });
             
@@ -196,6 +416,9 @@ const ListManager = {
             newList.appendChild(deleteBtn);
             container.appendChild(newList);
 
+            // Make the new list draggable
+            this.makeListDraggable(newList);
+
             content.focus();
             const range = document.createRange();
             range.selectNodeContents(content);
@@ -284,6 +507,7 @@ const ListManager = {
 document.addEventListener('DOMContentLoaded', () => {
     ListManager.loadLists().then(() => {
         ListManager.setupEventListeners();
+        ListManager.initDragAndDrop(); // Initialize drag and drop
         // Attach add button event listener only once
         const addBtn = document.getElementById('addListBtn');
         if (addBtn && !addBtn.hasAttribute('data-listener')) {

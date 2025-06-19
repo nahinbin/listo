@@ -125,7 +125,8 @@ body {
     text-decoration: none;
     padding: 4px;
     border-radius: 4px;
-    transition: background-color 0.2s ease;
+    transition: opacity 0.2s ease;
+    outline: none;
 }
 
 .settings-link svg {
@@ -133,7 +134,15 @@ body {
 }
 
 .settings-link:hover {
-    background-color: var(--bg-hover);
+    opacity: 0.7;
+}
+
+.settings-link:focus {
+    outline: none !important;
+}
+
+.settings-link:active {
+    outline: none !important;
 }
 
 /* Lists container styles */
@@ -151,12 +160,24 @@ body {
     padding: 0;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    transition: border-color 0.3s ease, background 0.2s;
+    transition: border-color 0.3s ease, background 0.2s, transform 0.2s ease, opacity 0.2s ease;
     background: var(--bg-primary);
     overflow: hidden;
     position: relative;
-    padding-left: 16px;
+    padding-left: 20px;
     min-height: 36px;
+    cursor: grab;
+}
+
+.list-line:active {
+    cursor: grabbing;
+}
+
+.list-line.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .list-line > * {
@@ -227,7 +248,7 @@ body {
 .list-content {
     flex: 1;
     min-height: 36px;
-    padding: 8px 8px 8px 24px;
+    padding: 8px 8px 8px 18px;
     font-size: 16px;
     line-height: 1.5;
     color: var(--text-primary);
@@ -240,20 +261,89 @@ body {
 }
 
 /* Style for list prefixes (numbers, alphabets, bullets) */
+.list-content[data-style="none"]::before,
 .list-content[data-style="numbers"]::before,
 .list-content[data-style="alphabets"]::before,
-.list-content[data-style="bullets"]::before {
+.list-content[data-style="roman"]::before,
+.list-content[data-style="bullets"]::before,
+.list-content[data-style="dashes"]::before,
+.list-content[data-style="arrows"]::before,
+.list-content[data-style="stars"]::before,
+.list-content[data-style="hearts"]::before,
+.list-content[data-style="circles"]::before,
+.list-content[data-style="squares"]::before,
+.list-content[data-style="diamonds"]::before,
+.list-content[data-style="triangles"]::before,
+.list-content[data-style="dots"]::before,
+.list-content[data-style="lines"]::before {
     content: attr(data-prefix);
     position: absolute;
-    left: 8px;
+    left: 2px;
     color: var(--text-primary);
     pointer-events: none;
     user-select: none;
 }
 
+/* Special styling for none style - no prefix */
+.list-content[data-style="none"]::before {
+    content: "";
+}
+
+/* Special styling for different list types */
+.list-content[data-style="dashes"]::before {
+    content: "— ";
+    font-weight: bold;
+}
+
+.list-content[data-style="arrows"]::before {
+    content: "→ ";
+    font-weight: bold;
+}
+
+.list-content[data-style="stars"]::before {
+    content: "★ ";
+    color: #ffd700;
+}
+
+.list-content[data-style="hearts"]::before {
+    content: "♥ ";
+    color: #ff6b6b;
+}
+
+.list-content[data-style="circles"]::before {
+    content: "● ";
+    font-size: 0.8em;
+}
+
+.list-content[data-style="squares"]::before {
+    content: "■ ";
+    font-size: 0.8em;
+}
+
+.list-content[data-style="diamonds"]::before {
+    content: "◆ ";
+    font-size: 0.8em;
+}
+
+.list-content[data-style="triangles"]::before {
+    content: "▲ ";
+    font-size: 0.8em;
+}
+
+.list-content[data-style="dots"]::before {
+    content: "• ";
+    font-size: 1.2em;
+}
+
+.list-content[data-style="lines"]::before {
+    content: "| ";
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
 /* Remove old tickmark styles */
 .list-content[data-style="tickmarks"] {
-    padding-left: 16px;
+    padding-left: 10px;
 }
 
 .list-content:focus {
@@ -430,15 +520,29 @@ body.dark-mode .settings-link {
 }
 
 body.dark-mode .settings-link:hover {
-    background-color: #2a2a2a !important;
+    opacity: 0.7 !important;
 }
 
 body.dark-mode .list-line {
-    border-color: #333333 !important;
+    background: var(--bg-primary);
+    border-color: var(--border-color);
 }
 
 body.dark-mode .list-line:hover {
-    border-color: #ffffff !important;
+    border-color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+body.dark-mode .list-line.dragging {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .list-line.drag-over-above {
+    border-top-color: var(--text-primary);
+}
+
+body.dark-mode .list-line.drag-over-below {
+    border-bottom-color: var(--text-primary);
 }
 
 body.dark-mode .list-content {
@@ -585,4 +689,134 @@ body.dark-mode .style-select:hover {
 /* Ensure the list line has relative positioning for the checkbox */
 .list-line {
     position: relative;
+}
+
+body.dark-mode .success-content p {
+    color: #4ade80;
+}
+
+/* Emoji selector styles */
+.emoji-selector {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+}
+
+.emoji-selector-content {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 300px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.emoji-selector-content h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.emoji-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    min-height: 40px;
+}
+
+.emoji-option:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--text-primary);
+}
+
+.emoji-option[data-emoji="none"] {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.emoji-close {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.emoji-close:hover {
+    background-color: var(--bg-hover);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+body.dark-mode .emoji-selector-content {
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .emoji-selector-content h3 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .emoji-option {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .emoji-option:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--text-primary);
+}
+
+body.dark-mode .emoji-option[data-emoji="none"] {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .emoji-close {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-mode .emoji-close:hover {
+    background-color: var(--bg-hover);
 } 

@@ -602,6 +602,11 @@ function initializeEmoji() {
         }
     });
     
+    // Add click functionality to change emoji
+    emojiIcon.addEventListener('click', () => {
+        showEmojiSelector();
+    });
+    
     // Listen for emoji changes
     chrome.storage.onChanged.addListener((changes) => {
         if (changes.listEmoji) {
@@ -612,6 +617,71 @@ function initializeEmoji() {
             } else {
                 emojiIcon.style.display = 'none';
             }
+        }
+    });
+}
+
+// Function to show emoji selector
+function showEmojiSelector() {
+    // Remove any existing emoji selector
+    const existingSelector = document.querySelector('.emoji-selector');
+    if (existingSelector) {
+        existingSelector.remove();
+    }
+    
+    // Create emoji selector
+    const emojiSelector = document.createElement('div');
+    emojiSelector.className = 'emoji-selector';
+    emojiSelector.innerHTML = `
+        <div class="emoji-selector-content">
+            <h3>Choose Icon</h3>
+            <div class="emoji-grid">
+                <div class="emoji-option" data-emoji="none">none</div>
+                <div class="emoji-option" data-emoji="☀️">☀️</div>
+                <div class="emoji-option" data-emoji="🌙">🌙</div>
+                <div class="emoji-option" data-emoji="📝">📝</div>
+                <div class="emoji-option" data-emoji="📋">📋</div>
+                <div class="emoji-option" data-emoji="✅">✅</div>
+                <div class="emoji-option" data-emoji="📌">📌</div>
+                <div class="emoji-option" data-emoji="📓">📓</div>
+                <div class="emoji-option" data-emoji="📔">📔</div>
+                <div class="emoji-option" data-emoji="📒">📒</div>
+                <div class="emoji-option" data-emoji="📕">📕</div>
+                <div class="emoji-option" data-emoji="📗">📗</div>
+                <div class="emoji-option" data-emoji="📘">📘</div>
+                <div class="emoji-option" data-emoji="📙">📙</div>
+                <div class="emoji-option" data-emoji="📚">📚</div>
+                <div class="emoji-option" data-emoji="📖">📖</div>
+                <div class="emoji-option" data-emoji="🔖">🔖</div>
+                <div class="emoji-option" data-emoji="🏷️">🏷️</div>
+            </div>
+            <button class="emoji-close">Close</button>
+        </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(emojiSelector);
+    
+    // Handle emoji selection
+    const emojiOptions = emojiSelector.querySelectorAll('.emoji-option');
+    emojiOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const selectedEmoji = option.dataset.emoji;
+            chrome.storage.local.set({ listEmoji: selectedEmoji });
+            emojiSelector.remove();
+        });
+    });
+    
+    // Handle close button
+    const closeBtn = emojiSelector.querySelector('.emoji-close');
+    closeBtn.addEventListener('click', () => {
+        emojiSelector.remove();
+    });
+    
+    // Close when clicking outside
+    emojiSelector.addEventListener('click', (e) => {
+        if (e.target === emojiSelector) {
+            emojiSelector.remove();
         }
     });
 }
